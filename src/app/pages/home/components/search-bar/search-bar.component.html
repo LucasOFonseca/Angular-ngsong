@@ -1,0 +1,17 @@
+<div class="search-container">
+  <div class="search-bar">
+    <lucide-icon [img]="SearchIcon" size="20" />
+
+    <input
+      #search
+      class="search-input"
+      [value]="searchValue()"
+      (input)="searchValue.set(search.value)"
+      type="text"
+      placeholder="Procure por um artista..."
+      (keydown.enter)="onSearch()"
+    />
+  </div>
+
+  <button class="surface-button" (click)="onSearch()">Buscar</button>
+</div>

@@ -125,3 +125,26 @@ hr {
     pointer-events: none;
   }
 }
+
+.surface-button {
+  height: 40px;
+  border-radius: 20px;
+  border: none;
+  padding: 8px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--surface-color);
+  color: var(--foreground-color);
+
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    background-color: var(--btn-hover-color);
+  }
+
+  &:disabled {
+    opacity: 0.25;
+    pointer-events: none;
+  }
+}

@@ -1,0 +1,7 @@
+<header class="top-bar">
+  <button class="icon-button" (click)="themeService.toggleTheme()">
+    <lucide-icon
+      [img]="themeService.getTheme() === 'light' ? MoonIcon : SunIcon"
+    />
+  </button>
+</header>

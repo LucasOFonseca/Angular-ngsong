@@ -1,0 +1,38 @@
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--surface-color);
+  border-radius: 1.25rem 0 0 1.25rem;
+  width: 100%;
+  max-width: 450px;
+
+  lucide-icon {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 8px;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    height: 2.5rem;
+    padding: 0 16px 0 32px;
+  }
+}
+
+button {
+  border-radius: 0 1.25rem 1.25rem 0;
+  border-left: 1px solid var(--border-color);
+}
