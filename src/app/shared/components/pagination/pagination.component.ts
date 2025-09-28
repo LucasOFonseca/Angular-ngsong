@@ -6,6 +6,7 @@ import {
   ChevronRightIcon,
   LucideAngularModule,
 } from 'lucide-angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pagination',
@@ -27,14 +28,16 @@ export class PaginationComponent {
 
   currentPage = 1;
 
+  subs = new Subscription();
+
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.activatedRoute.queryParamMap.subscribe((params) => {
+    const sub = this.activatedRoute.queryParamMap.subscribe((params) => {
       const page = params.get('page');
 
       if (page) {
-        if (Number(page) > this.totalPages || Number(page) < 1) {
+        if (Number(page) < 1) {
           this.router.navigate([], {
             relativeTo: this.activatedRoute,
             queryParams: { page: 1 },
@@ -46,6 +49,8 @@ export class PaginationComponent {
         this.setPagesToShow();
       }
     });
+
+    this.subs.add(sub);
 
     this.setPagesToShow();
   }
@@ -88,5 +93,9 @@ export class PaginationComponent {
     });
 
     this.setPagesToShow();
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
   }
 }

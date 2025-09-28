@@ -1,0 +1,17 @@
+<article class="card">
+  <div class="artist-img-container">
+    @if (artist.images?.[0]?.url) {
+    <img [src]="artist.images?.[0]?.url" [alt]="artist.name" />
+    } @else {
+    <span>{{ artist.name.slice(0, 1) }}</span>
+    }
+  </div>
+
+  <div class="info">
+    <h3 class="name">{{ artist.name }}</h3>
+
+    <p class="genres">{{ artist.genres.slice(0, 3).join(", ") || "—" }}</p>
+
+    <p class="followers">Seguidores: {{ artist.followers.total }}</p>
+  </div>
+</article>

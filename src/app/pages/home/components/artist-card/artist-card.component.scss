@@ -1,0 +1,64 @@
+.card {
+  background: var(--surface-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  transition: box-shadow 0.3s ease, transform 0.3s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    transform-origin: center bottom;
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .artist-img-container {
+    position: relative;
+    width: 100%;
+    height: 175px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(
+      45deg,
+      var(--primary-color),
+      var(--secondary-color)
+    );
+
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    span {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #fff;
+    }
+  }
+
+  .info {
+    padding: 12px;
+
+    .name {
+      margin-bottom: 8px;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .genres {
+      margin-bottom: 8px;
+    }
+
+    .followers,
+    .pop {
+      font-size: 0.875rem;
+      color: var(--secondary-text);
+    }
+  }
+}
