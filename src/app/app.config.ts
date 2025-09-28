@@ -1,13 +1,18 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
 import { routes } from './app.routes';
+import { errorInterceptor } from './shared/interceptors/error.interceptor';
+
+dayjs.locale('pt-br');
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([errorInterceptor])),
   ],
 };

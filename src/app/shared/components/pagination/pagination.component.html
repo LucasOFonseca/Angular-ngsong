@@ -1,0 +1,27 @@
+<div class="pagination-container">
+  <button
+    class="icon-button"
+    [disabled]="currentPage === 1"
+    (click)="changePage(currentPage - 1)"
+  >
+    <lucide-icon [img]="ChevronLeftIcon" />
+  </button>
+
+  @for (page of pagesToShow; track $index) {
+  <button
+    [ngClass]="{ active: page === currentPage }"
+    class="icon-button"
+    (click)="changePage(page)"
+  >
+    {{ page }}
+  </button>
+  }
+
+  <button
+    class="icon-button"
+    [disabled]="currentPage === totalPages"
+    (click)="changePage(currentPage + 1)"
+  >
+    <lucide-icon [img]="ChevronRightIcon" />
+  </button>
+</div>

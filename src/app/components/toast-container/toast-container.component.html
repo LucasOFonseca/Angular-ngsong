@@ -1,0 +1,11 @@
+<div class="container">
+  @for (toast of toasts$ | async; track $index) {
+  <div class="toast" [ngClass]="toast.type">
+    <p>{{ toast.message }}</p>
+
+    <button class="icon-button" (click)="removeToast(toast.id)">
+      <lucide-icon [img]="XIcon" />
+    </button>
+  </div>
+  }
+</div>

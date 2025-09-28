@@ -1,0 +1,12 @@
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0 auto;
+
+  .active {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+}
