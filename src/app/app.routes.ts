@@ -11,4 +11,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/artist/artist.component').then((c) => c.ArtistComponent),
   },
+  {
+    path: 'album/:id',
+    loadComponent: () =>
+      import('./pages/album/album.component').then((c) => c.AlbumComponent),
+  },
 ];

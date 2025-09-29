@@ -1,0 +1,28 @@
+.album-header {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 48px;
+
+  .album-image {
+    width: 220px;
+    height: 220px;
+    border-radius: 8px;
+  }
+
+  .album-info {
+    flex: 1;
+
+    .title {
+      height: 32px;
+      width: 250px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+    }
+
+    .text {
+      height: 16px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+  }
+}

@@ -1,8 +1,7 @@
-<div class="album-card">
+<div class="album-card" (click)="goToAlbum()">
   <div class="album-content">
     <div class="album-cover">
       @if (album.images?.[0]?.url) {
-
       <img [src]="album.images?.[0]?.url" [alt]="album.name" />
       } @else {
       <lucide-icon [img]="DiscAlbumIcon" size="100" />
@@ -16,7 +15,12 @@
     </div>
   </div>
 
-  <a [href]="album.external_urls.spotify" target="_blank" rel="noopener">
+  <a
+    (click)="$event.stopPropagation()"
+    [href]="album.external_urls.spotify"
+    target="_blank"
+    rel="noopener"
+  >
     Abrir no Spotify
   </a>
 </div>

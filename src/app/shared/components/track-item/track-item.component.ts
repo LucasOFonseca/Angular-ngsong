@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Track } from '../../model/track.model';
+import { SimplifiedTrack } from '../../model/track.model';
 
 @Component({
   selector: 'app-track-item',
@@ -11,7 +11,7 @@ import { Track } from '../../model/track.model';
   styleUrl: './track-item.component.scss',
 })
 export class TrackItemComponent {
-  @Input({ required: true }) track!: Track;
+  @Input({ required: true }) track!: SimplifiedTrack;
   @Input({ required: true }) trackNumber!: number;
 
   constructor(private router: Router) {}
@@ -21,8 +21,6 @@ export class TrackItemComponent {
   }
 
   goToArtist(artistId: string) {
-    this.router.navigate(['artist', artistId], {
-      queryParamsHandling: 'preserve',
-    });
+    this.router.navigate(['artist', artistId]);
   }
 }

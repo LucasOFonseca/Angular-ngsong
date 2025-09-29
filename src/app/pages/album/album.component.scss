@@ -1,21 +1,25 @@
-.artist-page {
+.album-page {
   padding: 32px 16px;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+
+  h1 {
+    font-weight: 600;
+  }
 }
 
-.artist-header {
+.album-header {
   display: flex;
-  align-items: center;
   gap: 32px;
   margin-bottom: 48px;
 
-  .artist-image {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
+  .album-cover {
+    width: 220px;
+    height: 220px;
+    border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -30,35 +34,35 @@
       height: 100%;
       object-fit: cover;
     }
-
-    span {
-      font-size: 4.25rem;
-      font-weight: 900;
-      color: #fff;
-    }
   }
 
-  .artist-info {
+  .album-info {
     flex: 1;
 
-    h1 {
-      font-weight: 600;
+    .artists {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 8px;
+
+      span {
+        color: var(--secondary-text);
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
 
-    .genres {
+    .release,
+    .label {
       color: var(--secondary-text);
-    }
-
-    .followers {
-      margin: 8px 0;
-      color: var(--secondary-text);
+      margin-bottom: 8px;
     }
   }
 }
 
-.top-tracks {
-  margin-bottom: 48px;
-
+.album-tracks {
   h2 {
     margin-bottom: 16px;
   }
@@ -66,24 +70,6 @@
   ul {
     list-style: none;
     padding: 0;
-  }
-}
-
-.albums {
-  h2 {
-    margin-bottom: 16px;
-  }
-
-  .skeleton {
-    width: 274px;
-    height: 415px;
-    border-radius: 8px;
-  }
-
-  .album-grid {
-    display: grid;
-    gap: 24px;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
 
   .load-more-button {

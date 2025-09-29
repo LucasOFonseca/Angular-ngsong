@@ -16,8 +16,6 @@ export class ArtistCardComponent {
   constructor(private router: Router) {}
 
   goToArtist() {
-    this.router.navigate(['artist', this.artist.id], {
-      queryParamsHandling: 'preserve',
-    });
+    this.router.navigate(['artist', this.artist.id]);
   }
 }

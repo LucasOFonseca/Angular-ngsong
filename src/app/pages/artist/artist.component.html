@@ -20,21 +20,9 @@
         {{ artist()?.followers?.total ?? 0 | followers }} seguidores
       </p>
 
-      <div class="popularity">
-        Popularidade:
-        <span class="bar">
-          <span class="fill" [style.width.%]="artist()?.popularity"></span>
-        </span>
-        {{ artist()?.popularity }}%
-      </div>
+      <app-popularity-bar [value]="artist()?.popularity ?? 0" />
 
-      <a
-        class="spotify-link"
-        [href]="artist()?.external_urls?.spotify"
-        target="_blank"
-      >
-        Ver no Spotify
-      </a>
+      <app-spotify-link-button [url]="artist()?.external_urls?.spotify ?? ''" />
     </div>
   </section>
   } @if (topTracks() || isLoadingTopTracks()) {

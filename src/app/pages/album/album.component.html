@@ -1,0 +1,58 @@
+<div class="album-page">
+  @if (album() || isLoadingAlbum()) { @if (isLoadingAlbum()) {
+  <app-album-info-skeleton />
+  } @else {
+  <section class="album-header">
+    <div class="album-cover">
+      @if (album()?.images?.[0]?.url) {
+      <img [src]="album()?.images?.[0]?.url" [alt]="album()?.name" />
+      } @else {
+      <lucide-icon [img]="DiscAlbumIcon" size="100" />
+      }
+    </div>
+
+    <div class="album-info">
+      <h1>{{ album()?.name }}</h1>
+
+      <div class="artists">
+        @for (artist of album()?.artists; track $index;) { @if (!$last) {
+        <span (click)="goToArtist(artist.id)">{{ artist.name }}, </span>
+        } @else {
+        <span (click)="goToArtist(artist.id)">{{ artist.name }}</span>
+        } }
+      </div>
+
+      <p class="release">
+        {{ album()?.album_type | titlecase }} ·
+        {{ album()?.release_date | date }} · {{ album()?.total_tracks }} faixas
+      </p>
+
+      <p class="label">Gravadora: {{ album()?.label }}</p>
+
+      <app-popularity-bar [value]="album()?.popularity ?? 0" />
+
+      <app-spotify-link-button [url]="album()?.external_urls?.spotify ?? ''" />
+    </div>
+  </section>
+  }
+
+  <section class="album-tracks">
+    <h3>Lista de Faixas</h3>
+
+    <ul>
+      @if (isLoadingAlbum()) { @for (item of [1,2,3,4,5]; track $index) {
+      <app-track-skeleton />
+      } } @else { @for (track of album()?.tracks?.items; track $index) {
+      <app-track-item [track]="track" [trackNumber]="$index + 1" />
+      } }
+    </ul>
+
+    @if (album()?.tracks?.next) {
+    <button class="primary-button load-more-button" (click)="loadMoreTracks()">
+      Ver mais
+    </button>
+    }
+  </section>
+  } @else {
+  <app-not-found message="Album não encontrado" />}
+</div>

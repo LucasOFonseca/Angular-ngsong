@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   Component,
   computed,
@@ -5,7 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import {
   ArrowLeftIcon,
   LucideAngularModule,
@@ -42,7 +43,7 @@ export class TopBarComponent {
 
   isVisible = signal(true);
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(private router: Router, private location: Location) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((e) => this.currentUrl.set(e.urlAfterRedirects));
@@ -60,10 +61,15 @@ export class TopBarComponent {
   }
 
   goBack() {
-    const path = this.currentUrl().split('?')[0];
+    const referrer = document.referrer;
+    const currentHost = window.location.origin;
 
-    if (path.startsWith('/artist')) {
-      this.router.navigate(['/'], { queryParamsHandling: 'preserve' });
+    if (referrer && referrer.startsWith(currentHost)) {
+      this.location.back();
+
+      return;
     }
+
+    this.router.navigateByUrl('/');
   }
 }

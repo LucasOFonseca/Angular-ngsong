@@ -1,8 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AlbumCardComponent } from '../../shared/components/album-card/album-card.component';
 import { NotFoundComponent } from '../../shared/components/not-found/not-found.component';
+import { PopularityBarComponent } from '../../shared/components/popularity-bar/popularity-bar.component';
+import { SpotifyLinkButtonComponent } from '../../shared/components/spotify-link-button/spotify-link-button.component';
 import { TrackItemComponent } from '../../shared/components/track-item/track-item.component';
 import { TrackSkeletonComponent } from '../../shared/components/track-skeleton/track-skeleton.component';
 import { SimplifiedAlbumPaginatedResponse } from '../../shared/model/album.model';
@@ -25,6 +27,8 @@ import { TopTracksService } from './services/top-tracks.service';
     TrackSkeletonComponent,
     LucideAngularModule,
     NotFoundComponent,
+    SpotifyLinkButtonComponent,
+    PopularityBarComponent,
   ],
   templateUrl: './artist.component.html',
   styleUrl: './artist.component.scss',
@@ -43,7 +47,7 @@ export class ArtistComponent {
   albums = signal<SimplifiedAlbumPaginatedResponse | null>(null);
   isLoadingAlbums = signal(false);
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
+  constructor(private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -84,7 +88,7 @@ export class ArtistComponent {
 
     if (!nextUrl) return;
 
-    this.#albumService.getNext(nextUrl).subscribe((res) => {
+    this.#albumService.getNextArtistAlbums(nextUrl).subscribe((res) => {
       this.albums.update((curr) => ({
         ...res,
         items: [...(curr?.items ?? []), ...res.items],
