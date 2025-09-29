@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { Artist } from '../../../../shared/model/artist.model';
 
 @Component({
@@ -11,7 +12,11 @@ import { Artist } from '../../../../shared/model/artist.model';
 export class ArtistCardComponent {
   @Input({ required: true }) artist!: Artist;
 
-  openSpotify(url?: string) {
-    if (url) window.open(url, '_blank');
+  constructor(private router: Router) {}
+
+  goToArtist() {
+    this.router.navigate(['artist', this.artist.id], {
+      queryParamsHandling: 'preserve',
+    });
   }
 }

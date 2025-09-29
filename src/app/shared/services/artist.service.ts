@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.example';
-import { ArtistPaginatedResponse } from '../model/artist.model';
+import { Artist, ArtistPaginatedResponse } from '../model/artist.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +22,9 @@ export class ArtistService {
         },
       }
     );
+  }
+
+  getArtistDetails(id: string) {
+    return this.#httpClient.get<Artist>(`${this.baseUrl}/artists/${id}`);
   }
 }

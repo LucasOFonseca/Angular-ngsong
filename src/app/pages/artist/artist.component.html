@@ -1,0 +1,33 @@
+@if (artist()) {
+<div class="artist-page">
+  <section class="artist-header">
+    <div class="artist-image">
+      <img [src]="artist()?.images?.[0]?.url" [alt]="artist()?.name" />
+    </div>
+
+    <div class="artist-info">
+      <h1>{{ artist()?.name }}</h1>
+
+      <p class="genres">{{ artist()?.genres?.join(", ") || "—" }}</p>
+
+      <p class="followers">{{ artist()?.followers?.total }} seguidores</p>
+
+      <div class="popularity">
+        Popularidade:
+        <span class="bar">
+          <span class="fill" [style.width.%]="artist()?.popularity"></span>
+        </span>
+        {{ artist()?.popularity }}%
+      </div>
+
+      <a
+        class="spotify-link"
+        [href]="artist()?.external_urls?.spotify"
+        target="_blank"
+      >
+        Ver no Spotify
+      </a>
+    </div>
+  </section>
+</div>
+}
