@@ -1,0 +1,29 @@
+<li>
+  <div class="track-info">
+    <p class="track-index">{{ trackNumber.toString().padStart(2, "0") }}</p>
+
+    <div>
+      <p>{{ track.name }}</p>
+
+      <div class="track-artists">
+        @for (artist of track.artists; track $index;) { @if (!$last) {
+        <span (click)="goToArtist(artist.id)">{{ artist.name }}, </span>
+        } @else {
+        <span (click)="goToArtist(artist.id)">{{ artist.name }}</span>
+        }}
+      </div>
+    </div>
+  </div>
+
+  <div class="track-actions">
+    <span class="duration">{{
+      track.duration_ms | date : "mm:ss" : "UTC"
+    }}</span>
+
+    <button class="spotify-btn" (click)="openSpotify()">
+      <img src="/spotify-icon.svg" alt="Spotify" width="20" height="20" />
+
+      <span>Ouvir</span>
+    </button>
+  </div>
+</li>

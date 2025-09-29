@@ -1,8 +1,14 @@
-@if (artist()) {
 <div class="artist-page">
+  @if (artist() || isLoadingArtist()) { @if (isLoadingArtist()) {
+  <app-artist-info-skeleton />
+  } @else {
   <section class="artist-header">
     <div class="artist-image">
+      @if (artist()?.images?.[0]?.url) {
       <img [src]="artist()?.images?.[0]?.url" [alt]="artist()?.name" />
+      } @else {
+      <span>{{ artist()?.name?.slice(0, 1) }}</span>
+      }
     </div>
 
     <div class="artist-info">
@@ -10,7 +16,9 @@
 
       <p class="genres">{{ artist()?.genres?.join(", ") || "—" }}</p>
 
-      <p class="followers">{{ artist()?.followers?.total }} seguidores</p>
+      <p class="followers">
+        {{ artist()?.followers?.total ?? 0 | followers }} seguidores
+      </p>
 
       <div class="popularity">
         Popularidade:
@@ -29,5 +37,44 @@
       </a>
     </div>
   </section>
+  } @if (topTracks() || isLoadingTopTracks()) {
+  <section class="top-tracks">
+    <h2>Populares</h2>
+
+    @if (isLoadingTopTracks()) {
+    <ul>
+      @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+      <app-track-skeleton />
+      }
+    </ul>
+    } @else {
+    <ul>
+      @for (item of topTracks(); track $index) {
+      <app-track-item [track]="item" [trackNumber]="$index + 1" />
+      }
+    </ul>
+    }
+  </section>
+  }
+
+  <section class="albums">
+    <h2>Álbuns</h2>
+
+    <div class="album-grid">
+      @if (isLoadingAlbums()) { @for (item of [1,2,3,4]; track $index) {
+      <div class="skeleton"></div>
+      } } @else { @for (album of albums()?.items; track $index) {
+      <app-album-card [album]="album" />
+      } }
+    </div>
+
+    @if (albums()?.next) {
+    <button class="primary-button load-more-button" (click)="loadMoreAlbums()">
+      Ver mais
+    </button>
+    }
+  </section>
+  } @else {
+  <app-not-found message="Artista não encontrado" />
+  }
 </div>
-}

@@ -1,0 +1,17 @@
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+
+  .text {
+    height: 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .track-info {
+    display: flex;
+  }
+}

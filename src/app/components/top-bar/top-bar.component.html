@@ -1,4 +1,12 @@
-<header class="top-bar">
+<header class="top-bar" [class.hidden]="!isVisible()">
+  @if(showBackButton()) {
+  <button class="icon-button" (click)="goBack()">
+    <lucide-icon [img]="ArrowLeftIcon" />
+  </button>
+  } @else {
+  <div style="width: 40px"></div>
+  }
+
   <button class="icon-button" (click)="themeService.toggleTheme()">
     <lucide-icon
       [img]="themeService.getTheme() === 'light' ? MoonIcon : SunIcon"

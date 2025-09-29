@@ -1,0 +1,25 @@
+.artist-header {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 48px;
+
+  .artist-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+  }
+
+  .title {
+    height: 32px;
+    width: 250px;
+    border-radius: 16px;
+    margin-bottom: 8px;
+  }
+
+  .text {
+    height: 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+}

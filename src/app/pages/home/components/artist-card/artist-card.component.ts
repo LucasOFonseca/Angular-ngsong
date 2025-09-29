@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Artist } from '../../../../shared/model/artist.model';
+import { FollowersPipe } from '../../../../shared/pipes/followers.pipe';
 
 @Component({
   selector: 'app-artist-card',
   standalone: true,
-  imports: [],
+  imports: [FollowersPipe],
   templateUrl: './artist-card.component.html',
   styleUrl: './artist-card.component.scss',
 })
