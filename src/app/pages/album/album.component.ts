@@ -1,5 +1,6 @@
 import { DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DiscAlbumIcon, LucideAngularModule } from 'lucide-angular';
 import { NotFoundComponent } from '../../shared/components/not-found/not-found.component';
@@ -29,6 +30,7 @@ import { AlbumInfoSkeletonComponent } from './components/album-info-skeleton/alb
   styleUrl: './album.component.scss',
 })
 export class AlbumComponent {
+  readonly #titleService = inject(Title);
   readonly #albumService = inject(AlbumService);
 
   readonly DiscAlbumIcon = DiscAlbumIcon;
@@ -48,6 +50,10 @@ export class AlbumComponent {
         next: (album) => {
           this.album.set(album);
           this.isLoadingAlbum.set(false);
+
+          this.#titleService.setTitle(
+            `ngSound - Album - ${album.name} by ${album.artists[0].name}`
+          );
         },
         error: () => this.isLoadingAlbum.set(false),
       });

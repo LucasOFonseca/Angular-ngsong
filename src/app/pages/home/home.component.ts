@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlbumCardComponent } from '../../shared/components/album-card/album-card.component';
@@ -27,6 +28,7 @@ import { SearchBarComponent } from './components/search-bar/search-bar.component
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
+  readonly #titleService = inject(Title);
   readonly #artistsService = inject(ArtistService);
   readonly #albumService = inject(AlbumService);
 
@@ -98,6 +100,10 @@ export class HomeComponent {
     });
 
     this.subs.add(sub);
+  }
+
+  ngOnInit() {
+    this.#titleService.setTitle('ngSound - Home');
   }
 
   ngOnDestroy() {

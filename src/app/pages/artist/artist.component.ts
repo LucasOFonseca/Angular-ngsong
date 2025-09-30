@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AlbumCardComponent } from '../../shared/components/album-card/album-card.component';
@@ -34,6 +35,7 @@ import { TopTracksService } from './services/top-tracks.service';
   styleUrl: './artist.component.scss',
 })
 export class ArtistComponent {
+  readonly #titleService = inject(Title);
   readonly #artistService = inject(ArtistService);
   readonly #topTracksService = inject(TopTracksService);
   readonly #albumService = inject(AlbumService);
@@ -61,6 +63,8 @@ export class ArtistComponent {
         next: (artist) => {
           this.artist.set(artist);
           this.isLoadingArtist.set(false);
+
+          this.#titleService.setTitle(`ngSound - Artista - ${artist.name}`);
 
           this.#topTracksService.getArtistTopTracks(id).subscribe({
             next: ({ tracks }) => {
