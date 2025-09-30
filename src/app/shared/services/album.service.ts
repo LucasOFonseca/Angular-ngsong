@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment.example';
+import { environment } from '../../../environments/environment.development';
 import { Album, SimplifiedAlbumPaginatedResponse } from '../model/album.model';
 import { PaginatedData } from '../model/paginated-data.model';
 import { SimplifiedTrack } from '../model/track.model';
