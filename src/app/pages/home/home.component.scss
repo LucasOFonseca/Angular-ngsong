@@ -19,6 +19,12 @@
     color: var(--secondary-text);
   }
 
+  h3 {
+    @media screen and (max-width: 600px) {
+      font-size: 1.25rem;
+    }
+  }
+
   .album-card-grid {
     margin-top: 8px;
     display: grid;

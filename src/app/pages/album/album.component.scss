@@ -6,6 +6,10 @@
 
   h1 {
     font-weight: 600;
+
+    @media screen and (max-width: 960px) {
+      font-size: 2rem;
+    }
   }
 }
 
@@ -60,10 +64,19 @@
       margin-bottom: 8px;
     }
   }
+
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+    gap: 16px;
+
+    .album-cover {
+      align-self: center;
+    }
+  }
 }
 
 .album-tracks {
-  h2 {
+  h3 {
     margin-bottom: 16px;
   }
 

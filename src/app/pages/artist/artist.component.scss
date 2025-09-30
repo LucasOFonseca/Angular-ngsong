@@ -54,14 +54,38 @@
       color: var(--secondary-text);
     }
   }
+
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+    gap: 16px;
+
+    .artist-image {
+      width: 150px;
+      height: 150px;
+    }
+
+    .artist-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  }
+}
+
+h2 {
+  margin-bottom: 16px;
+
+  @media screen and (max-width: 600px) {
+    font-size: 1.5rem;
+  }
 }
 
 .top-tracks {
   margin-bottom: 48px;
-
-  h2 {
-    margin-bottom: 16px;
-  }
 
   ul {
     list-style: none;
@@ -70,10 +94,6 @@
 }
 
 .albums {
-  h2 {
-    margin-bottom: 16px;
-  }
-
   .skeleton {
     width: 274px;
     height: 415px;
