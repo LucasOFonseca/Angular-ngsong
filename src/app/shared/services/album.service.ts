@@ -30,4 +30,11 @@ export class AlbumService {
   getNextAlbumTracks(nextUrl: string) {
     return this.#httpClient.get<PaginatedData<SimplifiedTrack>>(nextUrl);
   }
+
+  getNewReleases() {
+    return this.#httpClient.get<{ albums: SimplifiedAlbumPaginatedResponse }>(
+      `${this.baseUrl}/browse/new-releases`,
+      { params: { limit: 8 } }
+    );
+  }
 }

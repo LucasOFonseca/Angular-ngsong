@@ -1,17 +1,33 @@
 <div class="home-container">
+  @if (isLoadingNewReleases()) {
+  <div class="spinner-container">
+    <app-spinner [size]="64" />
+  </div>
+  } @else {
   <app-search-bar />
 
   <section class="results-container">
-    @if (!artists() && !isLoadingArtists()) {
+    @if (!artists() && !isLoadingArtists()) { @if (newReleases()?.items?.length)
+    {
+    <h3>Novos Lançamentos</h3>
+
+    <div class="album-card-grid">
+      @for (album of newReleases()?.items; track $index) {
+      <app-album-card [album]="album" />
+      }
+    </div>
+    } @else {
     <h6>Os resultados da pesquisa aparecerão aqui.</h6>
-    } @else { @if (isLoadingArtists() && !artists()) {
-    <div class="card-grid">
+    } } @else { @if (isLoadingArtists() && !artists()) {
+    <div class="artist-card-grid">
       @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
       <app-artist-card-skeleton />
       }
     </div>
+    } @else { @if (!artists()?.items?.length) {
+    <h6>Nenhum artista encontrado!</h6>
     } @else {
-    <div class="card-grid">
+    <div class="artist-card-grid">
       @for (artist of artists()?.items; track $index) {
       <app-artist-card [artist]="artist" />
       }
@@ -21,6 +37,7 @@
       [limit]="artists()?.limit ?? 0"
       [total]="artists()?.total ?? 0"
     />
-    } }
+    } } }
   </section>
+  }
 </div>
