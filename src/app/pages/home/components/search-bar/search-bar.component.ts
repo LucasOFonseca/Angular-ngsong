@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LucideAngularModule, SearchIcon } from 'lucide-angular';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
@@ -17,14 +18,18 @@ export class SearchBarComponent {
 
   searchValue = signal('');
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
-    this.activatedRoute.queryParamMap.subscribe((params) => {
-      const q = params.get('q');
+  private readonly destroy$ = new Subject<void>();
 
-      if (q && decodeURIComponent(q) !== this.searchValue()) {
-        this.searchValue.set(decodeURIComponent(q));
-      }
-    });
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+    this.activatedRoute.queryParamMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        const q = params.get('q');
+
+        if (q && decodeURIComponent(q) !== this.searchValue()) {
+          this.searchValue.set(decodeURIComponent(q));
+        }
+      });
   }
 
   onSearch() {
@@ -38,5 +43,10 @@ export class SearchBarComponent {
       },
       queryParamsHandling: 'merge',
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
