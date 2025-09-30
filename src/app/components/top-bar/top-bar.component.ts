@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import {
   Component,
   computed,
@@ -14,6 +13,7 @@ import {
   SunIcon,
 } from 'lucide-angular';
 import { filter } from 'rxjs';
+import { AppHistoryService } from '../../shared/services/app-history.service';
 import { ThemeService } from '../../shared/services/theme.service';
 
 @Component({
@@ -29,6 +29,7 @@ export class TopBarComponent {
   readonly ArrowLeftIcon = ArrowLeftIcon;
 
   readonly themeService = inject(ThemeService);
+  readonly appHistoryService = inject(AppHistoryService);
 
   private lastScrollTop = 0;
 
@@ -43,7 +44,7 @@ export class TopBarComponent {
 
   isVisible = signal(true);
 
-  constructor(private router: Router, private location: Location) {
+  constructor(private router: Router) {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((e) => this.currentUrl.set(e.urlAfterRedirects));
@@ -61,15 +62,6 @@ export class TopBarComponent {
   }
 
   goBack() {
-    const referrer = document.referrer;
-    const currentHost = window.location.origin;
-
-    if (referrer && referrer.startsWith(currentHost)) {
-      this.location.back();
-
-      return;
-    }
-
-    this.router.navigateByUrl('/');
+    this.appHistoryService.goBack();
   }
 }
