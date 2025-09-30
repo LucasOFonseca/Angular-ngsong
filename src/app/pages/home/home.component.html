@@ -1,10 +1,11 @@
 <div class="home-container">
+  <app-search-bar />
+
   @if (isLoadingNewReleases()) {
   <div class="spinner-container">
     <app-spinner [size]="64" />
   </div>
   } @else {
-  <app-search-bar />
 
   <section class="results-container">
     @if (!artists() && !isLoadingArtists()) { @if (newReleases()?.items?.length)

@@ -80,27 +80,24 @@ export class HomeComponent {
           });
 
         this.subs.add(artistSub);
-      } else this.artists.set(null);
+      } else {
+        this.artists.set(null);
+
+        if (!this.newReleases()) {
+          this.isLoadingNewReleases.set(true);
+
+          this.#albumService.getNewReleases().subscribe({
+            next: (res) => {
+              this.newReleases.set(res.albums);
+              this.isLoadingNewReleases.set(false);
+            },
+            error: () => this.isLoadingNewReleases.set(false),
+          });
+        }
+      }
     });
 
     this.subs.add(sub);
-  }
-
-  ngOnInit() {
-    const isGettingArtists =
-      this.activatedRoute.snapshot.queryParamMap.has('q');
-
-    if (!isGettingArtists) {
-      this.isLoadingNewReleases.set(true);
-
-      this.#albumService.getNewReleases().subscribe({
-        next: (res) => {
-          this.newReleases.set(res.albums);
-          this.isLoadingNewReleases.set(false);
-        },
-        error: () => this.isLoadingNewReleases.set(false),
-      });
-    }
   }
 
   ngOnDestroy() {
