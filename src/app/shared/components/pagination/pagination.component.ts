@@ -6,7 +6,7 @@ import {
   ChevronRightIcon,
   LucideAngularModule,
 } from 'lucide-angular';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-pagination',
@@ -28,29 +28,29 @@ export class PaginationComponent {
 
   currentPage = 1;
 
-  subs = new Subscription();
+  private readonly destroy$ = new Subject<void>();
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    const sub = this.activatedRoute.queryParamMap.subscribe((params) => {
-      const page = params.get('page');
+    this.activatedRoute.queryParamMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        const page = params.get('page');
 
-      if (page) {
-        if (Number(page) < 1) {
-          this.router.navigate([], {
-            relativeTo: this.activatedRoute,
-            queryParams: { page: 1 },
-            queryParamsHandling: 'merge',
-          });
+        if (page) {
+          if (Number(page) < 1) {
+            this.router.navigate([], {
+              relativeTo: this.activatedRoute,
+              queryParams: { page: 1 },
+              queryParamsHandling: 'merge',
+            });
+          }
+
+          this.currentPage = Number(page);
+          this.setPagesToShow();
         }
-
-        this.currentPage = Number(page);
-        this.setPagesToShow();
-      }
-    });
-
-    this.subs.add(sub);
+      });
 
     this.setPagesToShow();
   }
@@ -96,6 +96,7 @@ export class PaginationComponent {
   }
 
   ngOnDestroy() {
-    this.subs.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
