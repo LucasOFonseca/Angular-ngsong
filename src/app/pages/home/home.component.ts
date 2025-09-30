@@ -1,7 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import {
+  distinctUntilChanged,
+  map,
+  of,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { AlbumCardComponent } from '../../shared/components/album-card/album-card.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
@@ -38,68 +46,74 @@ export class HomeComponent {
   newReleases = signal<SimplifiedAlbumPaginatedResponse | null>(null);
   isLoadingNewReleases = signal(false);
 
-  subs = new Subscription();
+  private readonly destroy$ = new Subject<void>();
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {
-    const sub = this.activatedRoute.queryParamMap.subscribe((params) => {
-      const q = params.get('q');
-      const page = params.get('page');
+    this.activatedRoute.queryParamMap
+      .pipe(
+        map((params) => {
+          const q = params.get('q');
+          const queryPage = params.get('page');
 
-      let pageNumber = page ? Number(page) : 1;
+          let page = queryPage ? Number(queryPage) : 1;
 
-      if (Number.isNaN(pageNumber) || pageNumber < 1) {
-        pageNumber = 1;
+          if (Number.isNaN(page) || page < 1) {
+            page = 1;
 
-        this.router.navigate([], {
-          relativeTo: this.activatedRoute,
-          queryParams: { page: 1 },
-          queryParamsHandling: 'merge',
-        });
+            this.router.navigate([], {
+              relativeTo: this.activatedRoute,
+              queryParams: { page: 1 },
+              queryParamsHandling: 'merge',
+            });
+          } else if (page > 50) {
+            page = 50;
 
-        return;
-      }
+            this.router.navigate([], {
+              relativeTo: this.activatedRoute,
+              queryParams: { page: 50 },
+              queryParamsHandling: 'merge',
+            });
+          }
 
-      if (pageNumber > 50) {
-        pageNumber = 50;
+          return { q, page };
+        }),
+        distinctUntilChanged(
+          (prev, curr) => prev.q === curr.q && prev.page === curr.page
+        ),
+        switchMap(({ q, page }) => {
+          if (q) {
+            this.isLoadingArtists.set(true);
 
-        this.router.navigate([], {
-          relativeTo: this.activatedRoute,
-          queryParams: { page: 50 },
-          queryParamsHandling: 'merge',
-        });
+            return this.#artistsService.searchArtists(q, page).pipe(
+              tap({
+                next: (res) => {
+                  this.artists.set(res.artists);
+                  this.isLoadingArtists.set(false);
+                },
+                error: () => this.isLoadingArtists.set(false),
+              })
+            );
+          }
 
-        return;
-      }
+          this.artists.set(null);
 
-      if (q) {
-        this.isLoadingArtists.set(true);
+          if (this.newReleases()) return of(null);
 
-        const artistSub = this.#artistsService
-          .searchArtists(q, pageNumber)
-          .subscribe({
-            next: (res) => this.artists.set(res.artists),
-            complete: () => this.isLoadingArtists.set(false),
-          });
-
-        this.subs.add(artistSub);
-      } else {
-        this.artists.set(null);
-
-        if (!this.newReleases()) {
           this.isLoadingNewReleases.set(true);
 
-          this.#albumService.getNewReleases().subscribe({
-            next: (res) => {
-              this.newReleases.set(res.albums);
-              this.isLoadingNewReleases.set(false);
-            },
-            error: () => this.isLoadingNewReleases.set(false),
-          });
-        }
-      }
-    });
-
-    this.subs.add(sub);
+          return this.#albumService.getNewReleases().pipe(
+            tap({
+              next: (res) => {
+                this.newReleases.set(res.albums);
+                this.isLoadingNewReleases.set(false);
+              },
+              error: () => this.isLoadingNewReleases.set(false),
+            })
+          );
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
   }
 
   ngOnInit() {
@@ -107,6 +121,7 @@ export class HomeComponent {
   }
 
   ngOnDestroy() {
-    this.subs.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

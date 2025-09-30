@@ -6,7 +6,6 @@
     <app-spinner [size]="64" />
   </div>
   } @else {
-
   <section class="results-container">
     @if (!artists() && !isLoadingArtists()) { @if (newReleases()?.items?.length)
     {
@@ -19,13 +18,13 @@
     </div>
     } @else {
     <h6>Os resultados da pesquisa aparecerão aqui.</h6>
-    } } @else { @if (isLoadingArtists() && !artists()) {
+    } } @else if (isLoadingArtists() && !artists()) {
     <div class="artist-card-grid">
       @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
       <app-artist-card-skeleton />
       }
     </div>
-    } @else { @if (!artists()?.items?.length) {
+    } @else if (!artists()?.items?.length) {
     <h6>Nenhum artista encontrado!</h6>
     } @else {
     <div class="artist-card-grid">
@@ -38,7 +37,7 @@
       [limit]="artists()?.limit ?? 0"
       [total]="artists()?.total ?? 0"
     />
-    } } }
+    }
   </section>
   }
 </div>
