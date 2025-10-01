@@ -16,4 +16,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/album/album.component').then((c) => c.AlbumComponent),
   },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/not-found/not-found.component').then(
+        (c) => c.NotFoundComponent
+      ),
+  },
 ];
