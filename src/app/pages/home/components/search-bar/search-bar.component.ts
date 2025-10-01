@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, signal } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LucideAngularModule, SearchIcon } from 'lucide-angular';
+import { LucideAngularModule, SearchIcon, XIcon } from 'lucide-angular';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -12,11 +12,11 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './search-bar.component.scss',
 })
 export class SearchBarComponent {
-  #formBuilder = inject(FormBuilder);
-
   readonly SearchIcon = SearchIcon;
+  readonly XIcon = XIcon;
 
   searchValue = signal('');
+  showClearButton = signal(false);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -26,14 +26,21 @@ export class SearchBarComponent {
       .subscribe((params) => {
         const q = params.get('q');
 
-        if (q && decodeURIComponent(q) !== this.searchValue()) {
-          this.searchValue.set(decodeURIComponent(q));
+        if (q) {
+          this.showClearButton.set(true);
+
+          if (decodeURIComponent(q) !== this.searchValue()) {
+            this.searchValue.set(decodeURIComponent(q));
+          }
+        } else {
+          this.searchValue.set('');
+          this.showClearButton.set(false);
         }
       });
   }
 
-  onSearch() {
-    const value = this.searchValue();
+  onSearch(v?: string) {
+    const value = v ?? this.searchValue();
 
     this.router.navigate([], {
       relativeTo: this.activatedRoute,

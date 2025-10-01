@@ -11,6 +11,12 @@
       placeholder="Procure por um artista..."
       (keydown.enter)="onSearch()"
     />
+
+    @if (showClearButton()) {
+    <button class="icon-button" (click)="onSearch('')">
+      <lucide-icon [img]="XIcon" />
+    </button>
+    }
   </div>
 
   <button class="surface-button" (click)="onSearch()">Buscar</button>
