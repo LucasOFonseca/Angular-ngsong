@@ -29,8 +29,8 @@ export class SearchBarComponent {
         if (q) {
           this.showClearButton.set(true);
 
-          if (decodeURIComponent(q) !== this.searchValue()) {
-            this.searchValue.set(decodeURIComponent(q));
+          if (q !== this.searchValue()) {
+            this.searchValue.set(q);
           }
         } else {
           this.searchValue.set('');
@@ -45,7 +45,7 @@ export class SearchBarComponent {
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
       queryParams: {
-        q: value !== '' ? encodeURIComponent(value ?? '') : null,
+        q: value !== '' ? value : null,
         page: value !== '' ? 1 : null,
       },
       queryParamsHandling: 'merge',
