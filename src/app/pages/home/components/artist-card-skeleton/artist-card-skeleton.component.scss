@@ -3,4 +3,8 @@
   width: 100%;
   border-radius: 8px;
   display: flex;
+
+  @media screen and (max-width: 960px) {
+    height: 120px;
+  }
 }

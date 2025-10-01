@@ -47,7 +47,11 @@
       } }
     </ul>
 
-    @if (album()?.tracks?.next) {
+    @if (isLoadingMoreTracks()) {
+    <div class="spinner-container">
+      <app-spinner [size]="40" />
+    </div>
+    } @else if (album()?.tracks?.next) {
     <button class="primary-button load-more-button" (click)="loadMoreTracks()">
       Ver mais
     </button>

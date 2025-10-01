@@ -6,6 +6,7 @@ import { forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
 import { AlbumCardComponent } from '../../shared/components/album-card/album-card.component';
 import { NotFoundComponent } from '../../shared/components/not-found/not-found.component';
 import { PopularityBarComponent } from '../../shared/components/popularity-bar/popularity-bar.component';
+import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { SpotifyLinkButtonComponent } from '../../shared/components/spotify-link-button/spotify-link-button.component';
 import { TrackItemComponent } from '../../shared/components/track-item/track-item.component';
 import { TrackSkeletonComponent } from '../../shared/components/track-skeleton/track-skeleton.component';
@@ -31,6 +32,7 @@ import { TopTracksService } from './services/top-tracks.service';
     NotFoundComponent,
     SpotifyLinkButtonComponent,
     PopularityBarComponent,
+    SpinnerComponent,
   ],
   templateUrl: './artist.component.html',
   styleUrl: './artist.component.scss',
@@ -46,6 +48,7 @@ export class ArtistComponent implements OnInit, OnDestroy {
   albums = signal<SimplifiedAlbumPaginatedResponse | null>(null);
 
   isLoading = signal(false);
+  isLoadingMoreAlbums = signal(false);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -88,14 +91,20 @@ export class ArtistComponent implements OnInit, OnDestroy {
 
     if (!nextUrl) return;
 
+    this.isLoadingMoreAlbums.set(true);
+
     this.#albumService
       .getNextArtistAlbums(nextUrl)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
-        this.albums.update((curr) => ({
-          ...res,
-          items: [...(curr?.items ?? []), ...res.items],
-        }));
+      .subscribe({
+        next: (res) => {
+          this.albums.update((curr) => ({
+            ...res,
+            items: [...(curr?.items ?? []), ...res.items],
+          }));
+          this.isLoadingMoreAlbums.set(false);
+        },
+        error: () => this.isLoadingMoreAlbums.set(false),
       });
   }
 

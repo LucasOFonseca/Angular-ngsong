@@ -6,6 +6,7 @@ import { DiscAlbumIcon, LucideAngularModule } from 'lucide-angular';
 import { Subject, takeUntil } from 'rxjs';
 import { NotFoundComponent } from '../../shared/components/not-found/not-found.component';
 import { PopularityBarComponent } from '../../shared/components/popularity-bar/popularity-bar.component';
+import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { SpotifyLinkButtonComponent } from '../../shared/components/spotify-link-button/spotify-link-button.component';
 import { TrackItemComponent } from '../../shared/components/track-item/track-item.component';
 import { TrackSkeletonComponent } from '../../shared/components/track-skeleton/track-skeleton.component';
@@ -26,6 +27,7 @@ import { AlbumInfoSkeletonComponent } from './components/album-info-skeleton/alb
     AlbumInfoSkeletonComponent,
     TrackSkeletonComponent,
     NotFoundComponent,
+    SpinnerComponent,
   ],
   templateUrl: './album.component.html',
   styleUrl: './album.component.scss',
@@ -38,6 +40,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 
   album = signal<Album | null>(null);
   isLoadingAlbum = signal(false);
+  isLoadingMoreTracks = signal(false);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -78,21 +81,26 @@ export class AlbumComponent implements OnInit, OnDestroy {
 
     if (!nextUrl) return;
 
+    this.isLoadingMoreTracks.set(true);
+
     this.#albumService
       .getNextAlbumTracks(nextUrl)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
-        this.album.update((curr) =>
-          curr
-            ? {
-                ...curr,
-                tracks: {
-                  ...res,
-                  items: [...(curr?.tracks.items ?? []), ...res.items],
-                },
-              }
-            : null
-        );
+      .subscribe({
+        next: (res) => {
+          this.album.update((curr) =>
+            curr
+              ? {
+                  ...curr,
+                  tracks: {
+                    ...res,
+                    items: [...(curr?.tracks.items ?? []), ...res.items],
+                  },
+                }
+              : null
+          );
+        },
+        error: () => this.isLoadingMoreTracks.set(false),
       });
   }
 
