@@ -99,6 +99,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
                 }
               : null
           );
+          this.isLoadingMoreTracks.set(false);
         },
         error: () => this.isLoadingMoreTracks.set(false),
       });
