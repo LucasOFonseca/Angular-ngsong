@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
 import { AlbumCardComponent } from '../../shared/components/album-card/album-card.component';
 import { NotFoundComponent } from '../../shared/components/not-found/not-found.component';
 import { PopularityBarComponent } from '../../shared/components/popularity-bar/popularity-bar.component';
@@ -34,20 +35,19 @@ import { TopTracksService } from './services/top-tracks.service';
   templateUrl: './artist.component.html',
   styleUrl: './artist.component.scss',
 })
-export class ArtistComponent {
+export class ArtistComponent implements OnInit, OnDestroy {
   readonly #titleService = inject(Title);
   readonly #artistService = inject(ArtistService);
   readonly #topTracksService = inject(TopTracksService);
   readonly #albumService = inject(AlbumService);
 
   artist = signal<Artist | null>(null);
-  isLoadingArtist = signal(false);
-
   topTracks = signal<Track[] | null>(null);
-  isLoadingTopTracks = signal(false);
-
   albums = signal<SimplifiedAlbumPaginatedResponse | null>(null);
-  isLoadingAlbums = signal(false);
+
+  isLoading = signal(false);
+
+  private readonly destroy$ = new Subject<void>();
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -55,35 +55,31 @@ export class ArtistComponent {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
 
     if (id) {
-      this.isLoadingArtist.set(true);
-      this.isLoadingTopTracks.set(true);
-      this.isLoadingAlbums.set(true);
+      this.isLoading.set(true);
 
-      this.#artistService.getArtistDetails(id).subscribe({
-        next: (artist) => {
-          this.artist.set(artist);
-          this.isLoadingArtist.set(false);
+      this.#artistService
+        .getArtistDetails(id)
+        .pipe(
+          switchMap((artist) => {
+            this.artist.set(artist);
+            this.#titleService.setTitle(`ngSound - Artista - ${artist.name}`);
 
-          this.#titleService.setTitle(`ngSound - Artista - ${artist.name}`);
+            return forkJoin({
+              topTracksRes: this.#topTracksService.getArtistTopTracks(id),
+              albumsRes: this.#albumService.getArtistAlbums(id),
+            });
+          }),
+          takeUntil(this.destroy$)
+        )
+        .subscribe({
+          next: ({ topTracksRes, albumsRes }) => {
+            this.topTracks.set(topTracksRes.tracks);
+            this.albums.set(albumsRes);
 
-          this.#topTracksService.getArtistTopTracks(id).subscribe({
-            next: ({ tracks }) => {
-              this.topTracks.set(tracks);
-              this.isLoadingTopTracks.set(false);
-            },
-            error: () => this.isLoadingTopTracks.set(false),
-          });
-
-          this.#albumService.getArtistAlbums(id).subscribe({
-            next: (res) => {
-              this.albums.set(res);
-              this.isLoadingAlbums.set(false);
-            },
-            error: () => this.isLoadingAlbums.set(false),
-          });
-        },
-        error: () => this.isLoadingArtist.set(false),
-      });
+            this.isLoading.set(false);
+          },
+          error: () => this.isLoading.set(false),
+        });
     }
   }
 
@@ -92,11 +88,19 @@ export class ArtistComponent {
 
     if (!nextUrl) return;
 
-    this.#albumService.getNextArtistAlbums(nextUrl).subscribe((res) => {
-      this.albums.update((curr) => ({
-        ...res,
-        items: [...(curr?.items ?? []), ...res.items],
-      }));
-    });
+    this.#albumService
+      .getNextArtistAlbums(nextUrl)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.albums.update((curr) => ({
+          ...res,
+          items: [...(curr?.items ?? []), ...res.items],
+        }));
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

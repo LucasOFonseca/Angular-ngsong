@@ -1,5 +1,5 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { LucideAngularModule, XIcon } from 'lucide-angular';
 import { Observable } from 'rxjs';
 import { Toast } from '../../shared/model/toast.model';
@@ -12,7 +12,7 @@ import { ToastService } from '../../shared/services/toast.service';
   templateUrl: './toast-container.component.html',
   styleUrl: './toast-container.component.scss',
 })
-export class ToastContainerComponent {
+export class ToastContainerComponent implements OnInit {
   private toastService = inject(ToastService);
 
   readonly XIcon = XIcon;

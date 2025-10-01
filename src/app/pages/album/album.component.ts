@@ -1,8 +1,9 @@
 import { DatePipe, TitleCasePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DiscAlbumIcon, LucideAngularModule } from 'lucide-angular';
+import { Subject, takeUntil } from 'rxjs';
 import { NotFoundComponent } from '../../shared/components/not-found/not-found.component';
 import { PopularityBarComponent } from '../../shared/components/popularity-bar/popularity-bar.component';
 import { SpotifyLinkButtonComponent } from '../../shared/components/spotify-link-button/spotify-link-button.component';
@@ -29,7 +30,7 @@ import { AlbumInfoSkeletonComponent } from './components/album-info-skeleton/alb
   templateUrl: './album.component.html',
   styleUrl: './album.component.scss',
 })
-export class AlbumComponent {
+export class AlbumComponent implements OnInit, OnDestroy {
   readonly #titleService = inject(Title);
   readonly #albumService = inject(AlbumService);
 
@@ -37,6 +38,8 @@ export class AlbumComponent {
 
   album = signal<Album | null>(null);
   isLoadingAlbum = signal(false);
+
+  private readonly destroy$ = new Subject<void>();
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
@@ -46,17 +49,20 @@ export class AlbumComponent {
     if (id) {
       this.isLoadingAlbum.set(true);
 
-      this.#albumService.getAlbumDetails(id).subscribe({
-        next: (album) => {
-          this.album.set(album);
-          this.isLoadingAlbum.set(false);
+      this.#albumService
+        .getAlbumDetails(id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (album) => {
+            this.album.set(album);
+            this.isLoadingAlbum.set(false);
 
-          this.#titleService.setTitle(
-            `ngSound - Album - ${album.name} by ${album.artists[0].name}`
-          );
-        },
-        error: () => this.isLoadingAlbum.set(false),
-      });
+            this.#titleService.setTitle(
+              `ngSound - Album - ${album.name} by ${album.artists[0].name}`
+            );
+          },
+          error: () => this.isLoadingAlbum.set(false),
+        });
     }
   }
 
@@ -72,18 +78,26 @@ export class AlbumComponent {
 
     if (!nextUrl) return;
 
-    this.#albumService.getNextAlbumTracks(nextUrl).subscribe((res) => {
-      this.album.update((curr) =>
-        curr
-          ? {
-              ...curr,
-              tracks: {
-                ...res,
-                items: [...(curr?.tracks.items ?? []), ...res.items],
-              },
-            }
-          : null
-      );
-    });
+    this.#albumService
+      .getNextAlbumTracks(nextUrl)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.album.update((curr) =>
+          curr
+            ? {
+                ...curr,
+                tracks: {
+                  ...res,
+                  items: [...(curr?.tracks.items ?? []), ...res.items],
+                },
+              }
+            : null
+        );
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

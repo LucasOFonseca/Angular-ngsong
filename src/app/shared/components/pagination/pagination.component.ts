@@ -1,5 +1,12 @@
 import { NgClass } from '@angular/common';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ChevronLeftIcon,
@@ -15,7 +22,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.scss',
 })
-export class PaginationComponent {
+export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) total = 0;
   @Input({ required: true }) limit = 0;
 

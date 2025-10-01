@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -35,7 +35,7 @@ import { SearchBarComponent } from './components/search-bar/search-bar.component
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
   readonly #titleService = inject(Title);
   readonly #artistsService = inject(ArtistService);
   readonly #albumService = inject(AlbumService);

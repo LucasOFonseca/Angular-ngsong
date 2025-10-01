@@ -1,6 +1,26 @@
 <div class="artist-page">
-  @if (artist() || isLoadingArtist()) { @if (isLoadingArtist()) {
+  @if (artist() || isLoading()) { @if (isLoading()) {
   <app-artist-info-skeleton />
+
+  <section class="top-tracks">
+    <h2>Populares</h2>
+
+    <ul>
+      @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+      <app-track-skeleton />
+      }
+    </ul>
+  </section>
+
+  <section class="albums">
+    <h2>Álbuns</h2>
+
+    <div class="album-grid">
+      @for (item of [1,2,3,4]; track $index) {
+      <div class="skeleton"></div>
+      }
+    </div>
+  </section>
   } @else {
   <section class="artist-header">
     <div class="artist-image">
@@ -25,23 +45,15 @@
       <app-spotify-link-button [url]="artist()?.external_urls?.spotify ?? ''" />
     </div>
   </section>
-  } @if (topTracks() || isLoadingTopTracks()) {
+  } @if (topTracks()) {
   <section class="top-tracks">
     <h2>Populares</h2>
 
-    @if (isLoadingTopTracks()) {
-    <ul>
-      @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
-      <app-track-skeleton />
-      }
-    </ul>
-    } @else {
     <ul>
       @for (item of topTracks(); track $index) {
       <app-track-item [track]="item" [trackNumber]="$index + 1" />
       }
     </ul>
-    }
   </section>
   }
 
@@ -49,11 +61,9 @@
     <h2>Álbuns</h2>
 
     <div class="album-grid">
-      @if (isLoadingAlbums()) { @for (item of [1,2,3,4]; track $index) {
-      <div class="skeleton"></div>
-      } } @else { @for (album of albums()?.items; track $index) {
+      @for (album of albums()?.items; track $index) {
       <app-album-card [album]="album" />
-      } }
+      }
     </div>
 
     @if (albums()?.next) {
